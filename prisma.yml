@@ -1,0 +1,6 @@
+endpoint: https://us1.prisma.sh/ignacio-bejarano-533d99/americana-fair-backend/dev
+datamodel: datamodel.prisma
+
+hooks:
+  post-deploy:
+    - graphql get-schema -p prisma
