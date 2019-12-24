@@ -1,9 +1,8 @@
 const createServer = require('./createServer');
 require('dotenv').load();
+const db = require('./db');
 
 // require('dotenv').config({ path: '.env' });
-
-console.log(process.env.PRISMA_ENDPOINT);
 
 const server = createServer();
 
