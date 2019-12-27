@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/ignacio-bejarano-533d99/americana-fair-backend/dev
-# timestamp: Tue Dec 24 2019 11:05:50 GMT-0300 (Argentina Standard Time)
+# timestamp: Fri Dec 27 2019 19:47:55 GMT-0300 (Argentina Standard Time)
 
 type AggregateItem {
   count: Int!
@@ -415,6 +415,13 @@ type PageInfo {
   endCursor: String
 }
 
+enum Permission {
+  ADMIN
+  USER
+  PERMISSIONUPDATE
+  ITEMUPDATE
+}
+
 type Query {
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   items(where: ItemWhereInput, orderBy: ItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Item]!
@@ -440,6 +447,7 @@ type User implements Node {
   name: String!
   email: String!
   password: String!
+  permissions: [Permission!]!
 }
 
 """A connection to a list of items."""
@@ -457,6 +465,11 @@ input UserCreateInput {
   name: String!
   email: String!
   password: String!
+  permissions: UserCreatepermissionsInput
+}
+
+input UserCreatepermissionsInput {
+  set: [Permission!]
 }
 
 """An edge in a connection."""
@@ -484,6 +497,7 @@ type UserPreviousValues {
   name: String!
   email: String!
   password: String!
+  permissions: [Permission!]!
 }
 
 type UserSubscriptionPayload {
@@ -529,12 +543,18 @@ input UserUpdateInput {
   name: String
   email: String
   password: String
+  permissions: UserUpdatepermissionsInput
 }
 
 input UserUpdateManyMutationInput {
   name: String
   email: String
   password: String
+  permissions: UserUpdatepermissionsInput
+}
+
+input UserUpdatepermissionsInput {
+  set: [Permission!]
 }
 
 input UserWhereInput {

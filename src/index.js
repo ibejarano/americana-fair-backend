@@ -1,10 +1,28 @@
+const jwt = require('jsonwebtoken');
 const createServer = require('./createServer');
 require('dotenv').load();
 const db = require('./db');
 
 // require('dotenv').config({ path: '.env' });
-console.log(process.env.FRONTEND_URL);
 const server = createServer();
+
+// create a new middleware for user check
+server.use((req, res, next) => {
+  if (!req.cookies) return next();
+  const { token } = req.cookies;
+  if (token) {
+    const { user } = jwt.verify(token, process.env.APP_SECRET);
+    req.userId = user;
+  }
+  next();
+});
+
+server.use(async (req, res, next) => {
+  if (!req.userId) return next();
+  const user = await db.query.users({ where: { id: req.userId } }, `{id, name, email, permissions}`);
+  req.user = user;
+  next();
+});
 
 server.start(
   {
@@ -14,6 +32,6 @@ server.start(
     },
   },
   deets => {
-    console.log(`Server is now running on port ${deets.port}`);
+    console.log(`Server is UP and running on port ${deets.port}`);
   }
 );
