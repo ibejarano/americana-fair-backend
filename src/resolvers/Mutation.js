@@ -15,6 +15,7 @@ const Mutation = {
     return item;
   },
   async signup(parent, args, ctx, info) {
+    const {password} = args;
     const hashedPassword = await bcrypt.hash(password, 10);
     const {email, name} = args;
     const user = await ctx.db.mutation.createUser(
@@ -25,7 +26,7 @@ const Mutation = {
           password: hashedPassword,
         },
       },
-      info
+      info,
     );
     return user;
   },
