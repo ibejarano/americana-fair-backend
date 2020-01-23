@@ -10,32 +10,29 @@ const Mutation = {
           ...args,
         },
       },
-      info
+      info,
     );
     return item;
   },
   async signup(parent, args, ctx, info) {
-    // 1 check if passwords are equal
-    const { password, passwordConfirmation } = args;
-    if (passwordConfirmation != password) {
-      throw new Error('Passwords dont match');
-    }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const { email, name } = args;
-    const user = await ctx.db.mutation.createUser({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
+    const {email, name} = args;
+    const user = await ctx.db.mutation.createUser(
+      {
+        data: {
+          name,
+          email,
+          password: hashedPassword,
+        },
       },
-    });
+      info
+    );
     return user;
   },
-
   async login(parent, args, ctx, info) {
     // 1 search for email
-    const { email, password } = args;
-    const [user] = await ctx.db.query.users({ where: { email } });
+    const {email, password} = args;
+    const [user] = await ctx.db.query.users({where: {email}});
     // 2 if exist then go to 3 else throw Error
     if (!user) {
       throw new Error('User or password is incorrect');
@@ -45,7 +42,7 @@ const Mutation = {
     if (!passwordMatchs) {
       throw new Error('Password is wrong!');
     }
-    const token = jwt.sign({ user: user.id }, process.env.APP_SECRET);
+    const token = jwt.sign({user: user.id}, process.env.APP_SECRET);
     // 4 set the cookie
     ctx.response.cookie('token', token, {
       httpOnly: true,
@@ -53,6 +50,10 @@ const Mutation = {
     });
 
     return user;
+  },
+  signout(parent, args, ctx, info) {
+    ctx.response.clearCookie('token');
+    return {message: 'Logged Out. See ya!'};
   },
 };
 

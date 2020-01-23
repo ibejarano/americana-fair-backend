@@ -2,7 +2,7 @@ enum Permission {
   ADMIN
   USER
   PERMISSIONUPDATE
-  ITEMUPDATE
+  ITEMCRUD
 }
 
 type User {
@@ -20,4 +20,7 @@ type Item {
   image: String!
   largeImage: String!
   description: String!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  user: User!
 }
