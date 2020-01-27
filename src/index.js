@@ -11,12 +11,10 @@ server.express.use(cookieParser());
 
 // create a new middleware for user check
 server.use((req, res, next) => {
-  console.log('cookie?', req.cookies);
   if (!req.cookies) return next();
   const {token} = req.cookies;
   if (token) {
     const {user} = jwt.verify(token, process.env.APP_SECRET);
-    console.log('i am getting this', user);
     req.userId = user;
   }
   next();
